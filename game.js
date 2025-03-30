@@ -1,24 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var models_1 = require("./models");
 var readlineSync = require("readline-sync");
+var cards_1 = require("./cards");
 var enemy = {
     name: "Dark Golem",
     health: 20,
 };
-// Available cards for the player to choose from
-var cards = [models_1.fireDragon, models_1.healingSpell, models_1.magicShield];
-// Function to display card details
+// card list
+var cards = cards_1.allCards;
+// display card
 function displayCards() {
     console.log("\nChoose a card to use:");
     cards.forEach(function (card, index) {
         console.log("".concat(index + 1, ": ").concat(card.name, " - Type: ").concat(card.type, " - Attack: ").concat("attack" in card ? card.attack : "N/A"));
     });
 }
-// Function to handle player's turn
+// player's turn
 function playerTurn() {
+    var _a;
+    console.log("Total Cards Loaded:", cards.length);
     displayCards();
-    var choice = readlineSync.questionInt("\nEnter the number of your chosen card: ") - 1;
+    var choice = ((_a = readlineSync.questionInt("\nEnter the number of your chosen card: ")) !== null && _a !== void 0 ? _a : 1) - 1;
     if (choice >= 0 && choice < cards.length) {
         var chosenCard = cards[choice];
         console.log("\nYou chose: ".concat(chosenCard.name));
