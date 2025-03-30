@@ -81,8 +81,8 @@ export enum CardType {
   }
   
 
-  /////////////////////////////////////////////////////////////////////////////////////////
-  const fireDragon: CreatureCard = {
+// cards 
+  export const fireDragon: CreatureCard = {
     id: "001",
     name: "Fire Dragon",
     type: CardType.Creature,
@@ -97,7 +97,7 @@ export enum CardType {
     buffs: ["Fire Shield"],
   };
   
-  const healingSpell: SpellCard = {
+  export const healingSpell: SpellCard = {
     id: "002",
     name: "Healing Light",
     type: CardType.Spell,
@@ -110,7 +110,7 @@ export enum CardType {
     buffs: ["Restore 5 health to all allies"],
   };
   
-  const magicShield: ArtifactCard = {
+  export const magicShield: ArtifactCard = {
     id: "003",
     name: "Magic Shield",
     type: CardType.Artifact,
@@ -128,7 +128,7 @@ export enum CardType {
   };
   
   // Example GameplayCard Instance
-  const fireDragonInGame: GameplayCard = {
+  export const fireDragonInGame: GameplayCard = {
     baseCard: fireDragon, // Reference to the base definition
     instanceId: "game-001-01", // Unique instance ID
     currentHealth: 6,
