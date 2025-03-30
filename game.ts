@@ -1,7 +1,8 @@
 import { fireDragon, healingSpell, magicShield, CreatureCard, SpellCard, ArtifactCard } from "./models";
 import * as readlineSync from "readline-sync";
+import { allCards } from "./cards";
 
-// Enemy setup
+
 interface Enemy {
   name: string;
   health: number;
@@ -12,10 +13,10 @@ let enemy: Enemy = {
   health: 20,
 };
 
-// Available cards for the player to choose from
+// card list
 const cards = [fireDragon, healingSpell, magicShield];
 
-// Function to display card details
+// display card
 function displayCards() {
   console.log("\nChoose a card to use:");
   cards.forEach((card, index) => {
@@ -23,11 +24,11 @@ function displayCards() {
   });
 }
 
-// Function to handle player's turn
+// player's turn
 function playerTurn() {
   displayCards();
 
-  let choice = readlineSync.questionInt("\nEnter the number of your chosen card: ") - 1;
+  let choice = (readlineSync.questionInt("\nEnter the number of your chosen card: ") ?? 1) - 1;
 
   if (choice >= 0 && choice < cards.length) {
     let chosenCard = cards[choice];

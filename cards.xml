@@ -1,0 +1,30 @@
+<cards>
+    <card id="001" type="Creature">
+        <name>Fire Dragon</name>
+        <cost>5</cost>
+        <rarity>Legendary</rarity>
+        <faction>Fire</faction>
+        <attack>7</attack>
+        <health>6</health>
+        <defence>3</defence>
+        <mana>2</mana>
+        <abilities>
+            <ability>Flying</ability>
+            <ability>Burn</ability>
+        </abilities>
+        <buffs>
+            <buff>Fire Shield</buff>
+        </buffs>
+    </card>
+
+    <card id="002" type="Spell">
+        <name>Healing Light</name>
+        <cost>3</cost>
+        <rarity>Rare</rarity>
+        <faction>Light</faction>
+        <mana>2</mana>
+        <buffs>
+            <buff>Restore 5 health to all allies</buff>
+        </buffs>
+    </card>
+</cards>
