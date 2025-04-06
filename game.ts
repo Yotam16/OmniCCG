@@ -6,58 +6,84 @@ interface Enemy {
   health: number;
 }
 
+interface Player {
+  mana: number;
+  deck: any[];
+  hand: any[];
+}
+
+const MAX_MANA = 10;
+
 let enemy: Enemy = {
   name: "Dark Golem",
   health: 100,
 };
 
-function shuffle<T>(array: T[]): T[] {
+let player: Player = {
+  mana: MAX_MANA,
+  deck: [],
+  hand: [],
+};
+
+function shuffle(array: any[]) {
   return array.sort(() => Math.random() - 0.5);
+}
+
+function drawCard() {
+  if (player.deck.length > 0) {
+    const card = player.deck.pop();
+    player.hand.push(card);
+  }
 }
 
 async function startGame() {
   try {
     const allCards = await loadCards();
-    console.log("Total Cards Loaded:", allCards.length);
+    player.deck = shuffle(allCards).slice(0, 10);
+    player.hand = [];
+    for (let i = 0; i < 3; i++) drawCard();
 
-    let deck = shuffle(allCards).slice(0, 20);
-    let hand = deck.splice(0, 3);
+    console.log("Battle Start!");
 
-    while (enemy.health > 0 && (hand.length > 0 || deck.length > 0)) {
+    while (enemy.health > 0 && player.hand.length > 0) {
       console.log(`\nEnemy Health: ${enemy.health}`);
-      console.log("\nChoose a card to use:");
+      console.log(`Your Mana: ${player.mana}`);
+      console.log("\nYour Hand:");
 
-      hand.forEach((card, index) => {
-        console.log(`${index + 1}: ${card.name} - Type: ${card.type} - Attack: ${"attack" in card ? card.attack : "N/A"}`);
+      player.hand.forEach((card, index) => {
+        console.log(`${index + 1}: ${card.name} (Type: ${card.type}, Cost: ${card.cost}, Attack: ${card.attack ?? "N/A"})`);
       });
 
-      let choice = (readlineSync.questionInt("\nEnter the number of your chosen card: ") ?? 1) - 1;
+      let choice = (readlineSync.questionInt("\nChoose a card to play: ") ?? 1) - 1;
 
-      if (choice >= 0 && choice < hand.length) {
-        const chosenCard = hand.splice(choice, 1)[0];
-        console.log(`\nYou played: ${chosenCard.name}`);
+      if (choice >= 0 && choice < player.hand.length) {
+        let chosenCard = player.hand[choice];
 
-        if ("attack" in chosenCard && chosenCard.attack > 0) {
-          enemy.health -= chosenCard.attack;
-          console.log(`${chosenCard.name} dealt ${chosenCard.attack} damage!`);
+        if (chosenCard.cost > player.mana) {
+          console.log("Not enough mana!");
         } else {
-          console.log(`${chosenCard.name} has no attack power.`);
-        }
+          player.mana -= chosenCard.cost;
 
-        if (deck.length > 0) {
-          const newCard = deck.shift();
-          if (newCard) hand.push(newCard);
+          console.log(`\nYou played: ${chosenCard.name}`);
+
+          if ("attack" in chosenCard && chosenCard.attack > 0) {
+            enemy.health -= chosenCard.attack;
+            console.log(`It dealt ${chosenCard.attack} damage!`);
+          } else {
+            console.log("This card had no attack.");
+          }
+
+          player.hand.splice(choice, 1); // Remove used card
+          drawCard(); // Draw new one
         }
       } else {
-        console.log("Invalid choice!");
+        console.log("Invalid choice.");
       }
+
+      player.mana = Math.min(player.mana + 1, MAX_MANA); // Gain mana
     }
 
-    if (enemy.health <= 0) {
-      console.log("\nEnemy Defeated! Victory!");
-    } else {
-      console.log("\nNo more cards left! You Lose!");
-    }
+    console.log(enemy.health <= 0 ? "\nYou Win!" : "\nOut of cards! You lose.");
   } catch (error) {
     console.error("Error loading cards:", error);
   }
