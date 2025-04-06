@@ -8,50 +8,59 @@ interface Enemy {
 
 let enemy: Enemy = {
   name: "Dark Golem",
-  health: 20,
+  health: 100,
 };
 
-// Shuffle 
 function shuffle<T>(array: T[]): T[] {
   return array.sort(() => Math.random() - 0.5);
 }
 
-// Start the game
 async function startGame() {
   try {
     const allCards = await loadCards();
     console.log("Total Cards Loaded:", allCards.length);
 
-    const deck = shuffle(allCards).slice(0, 10);
-    console.log("Deck created with 10 random cards.");
+    let deck = shuffle(allCards).slice(0, 20);
+    let hand = deck.splice(0, 3);
 
-    const hand = deck.slice(0, 3);
-    console.log("\nChoose a card to use from your hand:");
-    hand.forEach((card, index) => {
-      console.log(`${index + 1}: ${card.name} - Type: ${card.type} - Attack: ${"attack" in card ? card.attack : "N/A"}`);
-    });
+    while (enemy.health > 0 && (hand.length > 0 || deck.length > 0)) {
+      console.log(`\nEnemy Health: ${enemy.health}`);
+      console.log("\nChoose a card to use:");
 
-    let choice = (readlineSync.questionInt("\nEnter the number of your chosen card: ") ?? 1) - 1;
+      hand.forEach((card, index) => {
+        console.log(`${index + 1}: ${card.name} - Type: ${card.type} - Attack: ${"attack" in card ? card.attack : "N/A"}`);
+      });
 
-    if (choice >= 0 && choice < hand.length) {
-      let chosenCard = hand[choice];
-      console.log(`\nYou chose: ${chosenCard.name}`);
+      let choice = (readlineSync.questionInt("\nEnter the number of your chosen card: ") ?? 1) - 1;
 
-      if ("attack" in chosenCard && chosenCard.attack > 0) {
-        enemy.health -= chosenCard.attack;
-        console.log(`${chosenCard.name} dealt ${chosenCard.attack} damage to ${enemy.name}!`);
+      if (choice >= 0 && choice < hand.length) {
+        const chosenCard = hand.splice(choice, 1)[0];
+        console.log(`\nYou played: ${chosenCard.name}`);
+
+        if ("attack" in chosenCard && chosenCard.attack > 0) {
+          enemy.health -= chosenCard.attack;
+          console.log(`${chosenCard.name} dealt ${chosenCard.attack} damage!`);
+        } else {
+          console.log(`${chosenCard.name} has no attack power.`);
+        }
+
+        if (deck.length > 0) {
+          const newCard = deck.shift();
+          if (newCard) hand.push(newCard);
+        }
       } else {
-        console.log(`${chosenCard.name} has no attack power.`);
+        console.log("Invalid choice!");
       }
+    }
 
-      console.log(`\nEnemy Health: ${enemy.health <= 0 ? "Defeated!" : enemy.health}`);
+    if (enemy.health <= 0) {
+      console.log("\nEnemy Defeated! Victory!");
     } else {
-      console.log("Invalid choice!");
+      console.log("\nNo more cards left! You Lose!");
     }
   } catch (error) {
     console.error("Error loading cards:", error);
   }
 }
 
-// Run the game
 startGame();

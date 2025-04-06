@@ -42,10 +42,14 @@ var enemy = {
     name: "Dark Golem",
     health: 20,
 };
+// Shuffle 
+function shuffle(array) {
+    return array.sort(function () { return Math.random() - 0.5; });
+}
 // Start the game
 function startGame() {
     return __awaiter(this, void 0, void 0, function () {
-        var cards, choice, chosenCard, error_1;
+        var allCards, deck, hand, choice, chosenCard, error_1;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -53,15 +57,18 @@ function startGame() {
                     _b.trys.push([0, 2, , 3]);
                     return [4 /*yield*/, (0, loadCards_1.loadCards)()];
                 case 1:
-                    cards = _b.sent();
-                    console.log("Total Cards Loaded:", cards.length);
-                    console.log("\nChoose a card to use:");
-                    cards.forEach(function (card, index) {
+                    allCards = _b.sent();
+                    console.log("Total Cards Loaded:", allCards.length);
+                    deck = shuffle(allCards).slice(0, 10);
+                    console.log("Deck created with 10 random cards.");
+                    hand = deck.slice(0, 3);
+                    console.log("\nChoose a card to use from your hand:");
+                    hand.forEach(function (card, index) {
                         console.log("".concat(index + 1, ": ").concat(card.name, " - Type: ").concat(card.type, " - Attack: ").concat("attack" in card ? card.attack : "N/A"));
                     });
                     choice = ((_a = readlineSync.questionInt("\nEnter the number of your chosen card: ")) !== null && _a !== void 0 ? _a : 1) - 1;
-                    if (choice >= 0 && choice < cards.length) {
-                        chosenCard = cards[choice];
+                    if (choice >= 0 && choice < hand.length) {
+                        chosenCard = hand[choice];
                         console.log("\nYou chose: ".concat(chosenCard.name));
                         if ("attack" in chosenCard && chosenCard.attack > 0) {
                             enemy.health -= chosenCard.attack;
