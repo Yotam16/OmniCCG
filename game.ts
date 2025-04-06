@@ -11,21 +11,30 @@ let enemy: Enemy = {
   health: 20,
 };
 
+// Shuffle 
+function shuffle<T>(array: T[]): T[] {
+  return array.sort(() => Math.random() - 0.5);
+}
+
 // Start the game
 async function startGame() {
   try {
-    const cards = await loadCards(); // ✅ Wait for cards to load
-    console.log("Total Cards Loaded:", cards.length);
+    const allCards = await loadCards();
+    console.log("Total Cards Loaded:", allCards.length);
 
-    console.log("\nChoose a card to use:");
-    cards.forEach((card, index) => {
+    const deck = shuffle(allCards).slice(0, 10);
+    console.log("Deck created with 10 random cards.");
+
+    const hand = deck.slice(0, 3);
+    console.log("\nChoose a card to use from your hand:");
+    hand.forEach((card, index) => {
       console.log(`${index + 1}: ${card.name} - Type: ${card.type} - Attack: ${"attack" in card ? card.attack : "N/A"}`);
     });
 
     let choice = (readlineSync.questionInt("\nEnter the number of your chosen card: ") ?? 1) - 1;
 
-    if (choice >= 0 && choice < cards.length) {
-      let chosenCard = cards[choice];
+    if (choice >= 0 && choice < hand.length) {
+      let chosenCard = hand[choice];
       console.log(`\nYou chose: ${chosenCard.name}`);
 
       if ("attack" in chosenCard && chosenCard.attack > 0) {
